@@ -4,7 +4,7 @@ val: valid/images
 test: test/images
 
 nc: 5
-names: ['balloon', 'bird', 'drone', 'plane', 'plastic']
+names: ["balloon", "bird", "drone", "plane", "plastic"]
 
 roboflow:
   workspace: aerial-small-object-detection
