@@ -1,7 +1,7 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 """Block modules."""
 
-from typing import List, Optional, Tuple
+from __future__ import annotations
 
 import torch
 import torch.nn as nn
@@ -13,47 +13,47 @@ from .conv import Conv, DWConv, GhostConv, LightConv, RepConv, autopad
 from .transformer import TransformerBlock
 
 __all__ = (
-    "DFL",
-    "HGBlock",
-    "HGStem",
-    "SPP",
-    "SPPF",
     "C1",
     "C2",
+    "C2PSA",
     "C3",
-    "C2f",
-    "C2fAttn",
-    "ImagePoolingAttn",
-    "ContrastiveHead",
-    "BNContrastiveHead",
-    "C3x",
     "C3TR",
-    "C3Ghost",
-    "GhostBottleneck",
+    "CIB",
+    "DFL",
+    "ELAN1",
+    "PSA",
+    "SPP",
+    "SPPELAN",
+    "SPPF",
+    "AConv",
+    "ADown",
+    "Attention",
+    "BNContrastiveHead",
     "Bottleneck",
     "BottleneckCSP",
-    "Proto",
-    "RepC3",
-    "ResNetLayer",
-    "RepNCSPELAN4",
-    "ELAN1",
-    "ADown",
-    "AConv",
-    "SPPELAN",
+    "C2f",
+    "C2fAttn",
+    "C2fCIB",
+    "C2fPSA",
+    "C3Ghost",
+    "C3k2",
+    "C3x",
     "CBFuse",
     "CBLinear",
-    "C3k2",
-    "C2fPSA",
-    "C2PSA",
+    "ContrastiveHead",
+    "GhostBottleneck",
+    "HGBlock",
+    "HGStem",
+    "ImagePoolingAttn",
+    "MoEConv",
+    "MoEConvBlock",
+    "Proto",
+    "RepC3",
+    "RepNCSPELAN4",
     "RepVGGDW",
-    "CIB",
-    "C2fCIB",
-    "Attention",
-    "PSA",
+    "ResNetLayer",
     "SCDown",
     "TorchVision",
-    "MoEConvBlock",
-    "MoEConv",
     "YCbCrDecoupler",
 )
 
@@ -195,7 +195,7 @@ class HGBlock(nn.Module):
 class SPP(nn.Module):
     """Spatial Pyramid Pooling (SPP) layer https://arxiv.org/abs/1406.4729."""
 
-    def __init__(self, c1: int, c2: int, k: Tuple[int, ...] = (5, 9, 13)):
+    def __init__(self, c1: int, c2: int, k: tuple[int, ...] = (5, 9, 13)):
         """
         Initialize the SPP layer with input/output channels and pooling kernel sizes.
 
@@ -469,21 +469,22 @@ class GhostBottleneck(nn.Module):
         """Apply skip connection and concatenation to input tensor."""
         return self.conv(x) + self.shortcut(x)
 
-#class Bottleneck(nn.Module):
+
+# class Bottleneck(nn.Module):
 #    """
 #    Per-Batch MoE-enhanced Bottleneck
-#    
+#
 #    核心设计：
 #    - 路由粒度 = Batch级别（整个Batch共享同一组专家）
 #    - 与普通卷积完全一致：所有样本、所有位置共享同一组卷积核
 #    - MoE置于通道压缩阶段（c1 → c_）
-#    
+#
 #    计算开销：
 #    - 路由次数: 1 次（整个Batch共享）
 #    - 专家选择: 1 组（top_k=c_ 个专家）
 #    - 与普通卷积完全相当 ✅
 #    """
-#    
+#
 #    def __init__(
 #        self,
 #        c1: int,
@@ -497,7 +498,7 @@ class GhostBottleneck(nn.Module):
 #    ):
 #        """
 #        初始化Per-Batch MoE Bottleneck
-#        
+#
 #        Args:
 #            c1: 输入通道数
 #            c2: 输出通道数
@@ -510,34 +511,34 @@ class GhostBottleneck(nn.Module):
 #        """
 #        super().__init__()
 #        c_ = int(c2 * e)  # hidden channels
-#        
+#
 #        # MoE参数
 #        self.top_k = c_  # 选择 c_ 个专家
 #        self.num_experts = num_experts if num_experts is not None else c2 * 4
 #        self.dropout_p = dropout_p
-#        
+#
 #        # 验证
 #        if self.top_k > self.num_experts:
 #            raise ValueError(
 #                f"top_k({self.top_k}) > num_experts({self.num_experts}). "
 #                f"Increase num_experts or reduce e."
 #            )
-#        
+#
 #        self.c1 = c1
 #        self.c_ = c_
 #        self.c2 = c2
 #        self.add = shortcut and c1 == c2
-#        
+#
 #        # MoE压缩层
 #        self._build_moe_layer(c1, k[0])
-#        
+#
 #        # 恢复层
 #        self.cv2 = Conv(c_, c2, k[1], 1, g=g)
-#        
+#
 #    def _build_moe_layer(self, c_in: int, kernel_size):
 #        """
 #        构建Per-Batch MoE压缩层
-#        
+#
 #        Args:
 #            c_in: 输入通道数
 #            kernel_size: 卷积核大小，可能是 int 或 tuple
@@ -548,9 +549,9 @@ class GhostBottleneck(nn.Module):
 #        else:
 #            k = kernel_size
 #        k = int(k)
-#        
+#
 #        self.kernel_size = k
-#        
+#
 #        # 1. Per-Batch Router: GAP -> MLP
 #        # 输出全局专家选择概率（整个Batch共享）
 #        router_hidden = max(c_in // 8, 16)
@@ -561,22 +562,22 @@ class GhostBottleneck(nn.Module):
 #            nn.ReLU(inplace=True),
 #            nn.Linear(router_hidden, self.num_experts, bias=True)  # [B, num_experts]
 #        )
-#        
+#
 #        # 2. 专家权重池: [num_experts, 1, c_in, k, k]
 #        # 每个专家输出 1 个通道
 #        self.expert_weights = nn.Parameter(
 #            torch.empty(self.num_experts, 1, c_in, k, k)
 #        )
 #        nn.init.kaiming_normal_(self.expert_weights, mode='fan_out', nonlinearity='relu')
-#        
+#
 #        # 3. BatchNorm + 激活
 #        self.bn = nn.BatchNorm2d(self.c_)
 #        self.act = nn.SiLU()
-#        
+#
 #    def forward(self, x: torch.Tensor) -> torch.Tensor:
 #        """
 #        前向传播（Per-Batch路由）
-#        
+#
 #        Args:
 #            x: [B, c1, H, W]
 #        Returns:
@@ -584,67 +585,67 @@ class GhostBottleneck(nn.Module):
 #        """
 #        identity = x
 #        B, C, H, W = x.shape
-#        
+#
 #        if H < self.kernel_size or W < self.kernel_size:
 #            raise ValueError(
 #                f"Input spatial size ({H}x{W}) must >= {self.kernel_size}x{self.kernel_size}"
 #            )
-#        
+#
 #        # ========== Step 1: Per-Batch 路由 ==========
 #        # 整个 Batch 共享同一组专家
 #        router_logits = self.router(x)  # [B, num_experts]
-#        
+#
 #        # 在 Batch 维度上平均，得到全局路由决策
 #        router_logits_avg = router_logits.mean(dim=0)  # [num_experts]
 #        router_probs = F.softmax(router_logits_avg, dim=-1)  # [num_experts]
-#        
+#
 #        # Dropout正则化（训练时）
 #        if self.training and self.dropout_p > 0:
 #            router_probs = F.dropout(router_probs, p=self.dropout_p)
 #            router_probs = router_probs / (router_probs.sum() + 1e-8)
-#        
+#
 #        # Top-K选择：选出全局最优的 c_ 个专家
 #        topk_weights, topk_indices = torch.topk(
 #            router_probs, self.top_k, dim=-1
 #        )  # [top_k=c_]
-#        
+#
 #        # 归一化权重
 #        topk_weights = topk_weights / (topk_weights.sum() + 1e-8)
-#        
+#
 #        # ========== Step 2: 专家卷积 ==========
 #        # 选出 c_ 个专家: [c_, 1, c1, k, k]
 #        selected_kernels = self.expert_weights[topk_indices]  # [c_, 1, c1, k, k]
 #        selected_kernels = selected_kernels.squeeze(1)  # [c_, c1, k, k]
-#        
+#
 #        # 标准卷积（所有样本共享这组专家）
 #        padding = self.kernel_size // 2
 #        output = F.conv2d(x, selected_kernels, padding=padding)  # [B, c_, H, W]
-#        
+#
 #        # ========== Step 3: 应用路由权重 ==========
 #        # topk_weights: [c_] -> [1, c_, 1, 1]
 #        topk_weights = topk_weights.view(1, self.c_, 1, 1)
 #        output = output * topk_weights
-#        
+#
 #        # BatchNorm + 激活
 #        output = self.act(self.bn(output))
-#        
+#
 #        # ========== Step 4: 恢复层 ==========
 #        output = self.cv2(output)
-#        
+#
 #        # ========== Step 5: 残差连接 ==========
 #        if self.add:
 #            output = output + identity
-#        
+#
 #        return output
 
-#class Bottleneck(nn.Module):
+# class Bottleneck(nn.Module):
 #    """
 #    Single-layer MoE Bottleneck module.
 #    单层MOE+点卷积
 #    Directly applies MoEConvBlock to transform c1 -> c2 channels.
 #    No expansion ratio, just pure MoE routing + grouped conv + pointwise conv.
 #    """
-#    
+#
 #    def __init__(
 #        self,
 #        c1: int,
@@ -670,7 +671,7 @@ class GhostBottleneck(nn.Module):
 #            top_k (int): Number of experts to select per forward pass.
 #        """
 #        super().__init__()
-#        
+#
 #        # Single MoE convolution layer: c1 -> c2
 #        self.moe_conv = MoEConvBlock(
 #            c1=c1,
@@ -684,23 +685,22 @@ class GhostBottleneck(nn.Module):
 #    def forward(self, x: torch.Tensor) -> torch.Tensor:
 #        """
 #        Apply single-layer MoE bottleneck.
-#        
+#
 #        Args:
 #            x (torch.Tensor): Input tensor of shape [B, c1, H, W]
-#            
+#
 #        Returns:
 #            torch.Tensor: Output tensor of shape [B, c2, H, W]
 #        """
 #        # Direct MoE forward pass (includes routing, grouped conv, pointwise, and shortcut)
 #        return self.moe_conv(x)
-        
 
-        
+
 class Bottleneck(nn.Module):
     """Standard bottleneck."""
 
     def __init__(
-        self, c1: int, c2: int, shortcut: bool = True, g: int = 1, k: Tuple[int, int] = (3, 3), e: float = 0.5
+        self, c1: int, c2: int, shortcut: bool = True, g: int = 1, k: tuple[int, int] = (3, 3), e: float = 0.5
     ):
         """
         Initialize a standard bottleneck module.
@@ -940,7 +940,7 @@ class ImagePoolingAttn(nn.Module):
     """ImagePoolingAttn: Enhance the text embeddings with image-aware information."""
 
     def __init__(
-        self, ec: int = 256, ch: Tuple[int, ...] = (), ct: int = 512, nh: int = 8, k: int = 3, scale: bool = False
+        self, ec: int = 256, ch: tuple[int, ...] = (), ct: int = 512, nh: int = 8, k: int = 3, scale: bool = False
     ):
         """
         Initialize ImagePoolingAttn module.
@@ -969,7 +969,7 @@ class ImagePoolingAttn(nn.Module):
         self.hc = ec // nh
         self.k = k
 
-    def forward(self, x: List[torch.Tensor], text: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: list[torch.Tensor], text: torch.Tensor) -> torch.Tensor:
         """
         Forward pass of ImagePoolingAttn.
 
@@ -1085,7 +1085,7 @@ class RepBottleneck(Bottleneck):
     """Rep bottleneck."""
 
     def __init__(
-        self, c1: int, c2: int, shortcut: bool = True, g: int = 1, k: Tuple[int, int] = (3, 3), e: float = 0.5
+        self, c1: int, c2: int, shortcut: bool = True, g: int = 1, k: tuple[int, int] = (3, 3), e: float = 0.5
     ):
         """
         Initialize RepBottleneck.
@@ -1255,7 +1255,7 @@ class SPPELAN(nn.Module):
 class CBLinear(nn.Module):
     """CBLinear."""
 
-    def __init__(self, c1: int, c2s: List[int], k: int = 1, s: int = 1, p: Optional[int] = None, g: int = 1):
+    def __init__(self, c1: int, c2s: list[int], k: int = 1, s: int = 1, p: int | None = None, g: int = 1):
         """
         Initialize CBLinear module.
 
@@ -1271,7 +1271,7 @@ class CBLinear(nn.Module):
         self.c2s = c2s
         self.conv = nn.Conv2d(c1, sum(c2s), k, s, autopad(k, p), groups=g, bias=True)
 
-    def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
+    def forward(self, x: torch.Tensor) -> list[torch.Tensor]:
         """Forward pass through CBLinear layer."""
         return self.conv(x).split(self.c2s, dim=1)
 
@@ -1279,7 +1279,7 @@ class CBLinear(nn.Module):
 class CBFuse(nn.Module):
     """CBFuse."""
 
-    def __init__(self, idx: List[int]):
+    def __init__(self, idx: list[int]):
         """
         Initialize CBFuse module.
 
@@ -1289,7 +1289,7 @@ class CBFuse(nn.Module):
         super().__init__()
         self.idx = idx
 
-    def forward(self, xs: List[torch.Tensor]) -> torch.Tensor:
+    def forward(self, xs: list[torch.Tensor]) -> torch.Tensor:
         """
         Forward pass through CBFuse layer.
 
@@ -2203,7 +2203,7 @@ class Residual(nn.Module):
 class SAVPE(nn.Module):
     """Spatial-Aware Visual Prompt Embedding module for feature enhancement."""
 
-    def __init__(self, ch: List[int], c3: int, embed: int):
+    def __init__(self, ch: list[int], c3: int, embed: int):
         """
         Initialize SAVPE module with channels, intermediate channels, and embedding dimension.
 
@@ -2231,7 +2231,7 @@ class SAVPE(nn.Module):
         self.cv5 = nn.Conv2d(1, self.c, 3, padding=1)
         self.cv6 = nn.Sequential(Conv(2 * self.c, self.c, 3), nn.Conv2d(self.c, self.c, 3, padding=1))
 
-    def forward(self, x: List[torch.Tensor], vp: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: list[torch.Tensor], vp: torch.Tensor) -> torch.Tensor:
         """Process input features and visual prompts to generate enhanced embeddings."""
         y = [self.cv2[i](xi) for i, xi in enumerate(x)]
         y = self.cv4(torch.cat(y, dim=1))
@@ -2261,7 +2261,8 @@ class SAVPE(nn.Module):
 
         return F.normalize(aggregated.transpose(-2, -3).reshape(B, Q, -1), dim=-1, p=2)
 
-#class MoEConvBlock(nn.Module):
+
+# class MoEConvBlock(nn.Module):
 #    """
 #    Optimized Fast MoE Convolution with Unified 3x3 Kernels
 #
@@ -2348,7 +2349,7 @@ class SAVPE(nn.Module):
 #        out = self.act(out)
 #        return out
 
-#class MoEConv(nn.Module):
+# class MoEConv(nn.Module):
 #    """
 #    MoE Convolution Module with Unified 3x3 Kernels - Adapted for Ultralytics parsing (n inserted by tasks.py)
 #    这个是不共享专家，开销更大的空间路由
@@ -2385,9 +2386,10 @@ class SAVPE(nn.Module):
 #            x = block(x)
 #        return x
 
+
 class MoEConvBlock(nn.Module):
     """
-    Optimized Fast MoE Convolution with Unified 3x3 Kernels
+    Optimized Fast MoE Convolution with Unified 3x3 Kernels.
 
     Enhancements:
     - Vectorized expert selection and convolution
@@ -2395,6 +2397,7 @@ class MoEConvBlock(nn.Module):
     - Soft MoE with weighted expert combination
     - Robust stride and boundary handling
     """
+
     def __init__(self, c1, c2, num_experts=32, top_k=2, stride=1, shortcut=True, shared_experts=None):
         super().__init__()
         self.c1 = c1
@@ -2405,10 +2408,10 @@ class MoEConvBlock(nn.Module):
         self.add = shortcut and c1 == c2
 
         # Shared expert weights: [num_experts, 1, 3, 3]
-        self.expert_weights = shared_experts if shared_experts is not None else nn.Parameter(
-            torch.empty(num_experts, 1, 3, 3)
+        self.expert_weights = (
+            shared_experts if shared_experts is not None else nn.Parameter(torch.empty(num_experts, 1, 3, 3))
         )
-        nn.init.kaiming_normal_(self.expert_weights, mode='fan_out', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.expert_weights, mode="fan_out", nonlinearity="relu")
 
         # Optimized router: GAP + Linear
         router_hidden = max(c1 // 4, 16)
@@ -2417,12 +2420,12 @@ class MoEConvBlock(nn.Module):
             nn.Flatten(),
             nn.Linear(c1, router_hidden, bias=False),
             nn.ReLU(inplace=False),
-            nn.Linear(router_hidden, c1 * num_experts, bias=True)
+            nn.Linear(router_hidden, c1 * num_experts, bias=True),
         )
 
         # Pointwise convolution: C*top_k → C2
         self.pointwise = nn.Conv2d(c1 * top_k, c2, 1, bias=False)
-        nn.init.kaiming_normal_(self.pointwise.weight, mode='fan_out', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.pointwise.weight, mode="fan_out", nonlinearity="relu")
 
         # BatchNorm and activation
         self.bn = nn.BatchNorm2d(c1 * top_k)
@@ -2446,7 +2449,7 @@ class MoEConvBlock(nn.Module):
         selected_kernels = selected_kernels.view(B * C * self.top_k, 1, 3, 3)  # [B*C*top_k, 1, 3, 3]
 
         # 3. Grouped convolution
-        x_padded = F.pad(x, (1, 1, 1, 1), mode='constant', value=0)  # [B, C, H+2, W+2]
+        x_padded = F.pad(x, (1, 1, 1, 1), mode="constant", value=0)  # [B, C, H+2, W+2]
         x_reshaped = x_padded.view(1, B * C, H + 2, W + 2)  # [1, B*C, H+2, W+2]
         out = F.conv2d(x_reshaped, selected_kernels, stride=self.stride, padding=0, groups=B * C)
         out = out.view(B, C * self.top_k, out.shape[-2], out.shape[-1])  # [B, C*top_k, H_out, W_out]
@@ -2470,9 +2473,10 @@ class MoEConvBlock(nn.Module):
         out = self.act(out)
         return out
 
+
 class MoEConv(nn.Module):
     """
-    MoE Convolution Module with Unified 3x3 Kernels
+    MoE Convolution Module with Unified 3x3 Kernels.
 
     Args:
         c1: Input channels
@@ -2483,6 +2487,7 @@ class MoEConv(nn.Module):
         shortcut: Enable residual connections, default True
         stride: Stride for the first block, default 1
     """
+
     def __init__(self, c1, c2, n=1, num_experts=32, top_k=2, shortcut=True, stride=1):
         super().__init__()
         if top_k > num_experts:
@@ -2498,31 +2503,38 @@ class MoEConv(nn.Module):
 
         # Shared experts across all blocks
         self.shared_experts = nn.Parameter(torch.empty(num_experts, 1, 3, 3))
-        nn.init.kaiming_normal_(self.shared_experts, mode='fan_out', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.shared_experts, mode="fan_out", nonlinearity="relu")
 
         self.blocks = nn.ModuleList()
-        self.blocks.append(MoEConvBlock(c1, c2, num_experts, top_k, stride=stride, shortcut=False, shared_experts=self.shared_experts))
+        self.blocks.append(
+            MoEConvBlock(c1, c2, num_experts, top_k, stride=stride, shortcut=False, shared_experts=self.shared_experts)
+        )
         for _ in range(n - 1):
-            self.blocks.append(MoEConvBlock(c2, c2, num_experts, top_k, stride=1, shortcut=shortcut, shared_experts=self.shared_experts))
+            self.blocks.append(
+                MoEConvBlock(
+                    c2, c2, num_experts, top_k, stride=1, shortcut=shortcut, shared_experts=self.shared_experts
+                )
+            )
 
     def forward(self, x):
         for block in self.blocks:
             x = block(x)
         return x
 
-#class YCbCrDecoupler(nn.Module):
+
+# class YCbCrDecoupler(nn.Module):
 #    """
 #    A PyTorch module that converts an RGB image tensor to YCbCr color space,
 #    decouples luminance (Y) and chrominance (Cb, Cr) components, and concatenates
 #    them into a 3-channel tensor for further processing.
-#    
+#
 #    Args:
 #        None (operates directly on input tensor).
-#    
+#
 #    Input:
 #        x (torch.Tensor): Input RGB tensor of shape [batch_size, 3, height, width],
 #                          with values in [0, 1].
-#    
+#
 #    Output:
 #        torch.Tensor: Decoupled and concatenated tensor [batch_size, 3, height, width],
 #                      with channels [Y, Cb, Cr], values in [0, 1].
@@ -2548,9 +2560,9 @@ class MoEConv(nn.Module):
 #        return torch.clamp(decoupled, 0.0, 1.0)
 class YCbCrDecoupler(nn.Module):
     def __init__(self, input_channels=3):
-        super(YCbCrDecoupler, self).__init__()
+        super().__init__()
         self.input_channels = input_channels
-        
+
         # ITU-R BT.601 conversion weights
         self.y_weights = torch.tensor([0.299, 0.587, 0.114], dtype=torch.float32).view(1, 3, 1, 1)
         self.cb_factor = torch.tensor(0.564, dtype=torch.float32)
@@ -2564,9 +2576,9 @@ class YCbCrDecoupler(nn.Module):
         cb_factor = self.cb_factor.to(x.device, dtype=dtype)
         cr_factor = self.cr_factor.to(x.device, dtype=dtype)
         offset = self.offset.to(x.device, dtype=dtype)
-        
+
         x = x * 255.0 if x.max() <= 1.0 else x  # Scale to [0, 255] if needed
-        r, g, b = x[:, 0:1, :, :], x[:, 1:2, :, :], x[:, 2:3, :, :]
+        r, _g, b = x[:, 0:1, :, :], x[:, 1:2, :, :], x[:, 2:3, :, :]
         y = (y_weights * x).sum(dim=1, keepdim=True)
         cb = cb_factor * (b - y) + offset * 255.0
         cr = cr_factor * (r - y) + offset * 255.0
