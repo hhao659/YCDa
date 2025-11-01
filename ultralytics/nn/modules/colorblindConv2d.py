@@ -1,8 +1,10 @@
 import torch
 import torch.nn as nn
 
+
 class ColorBlindTransform(nn.Module):
-    """色盲滤镜层，基于1×1卷积实现"""
+    """色盲滤镜层，基于1×1卷积实现."""
+
     def __init__(self, mode="protanopia"):
         super().__init__()
         self.mode = mode
@@ -13,26 +15,10 @@ class ColorBlindTransform(nn.Module):
     def _init_matrix(self):
         # 常见色盲模式转换矩阵
         matrices = {
-            "protanopia": torch.tensor([
-                [0.567, 0.433, 0.000],
-                [0.558, 0.442, 0.000],
-                [0.000, 0.242, 0.758]
-            ]),
-            "deuteranopia": torch.tensor([
-                [0.625, 0.375, 0.000],
-                [0.700, 0.300, 0.000],
-                [0.000, 0.300, 0.700]
-            ]),
-            "tritanopia": torch.tensor([
-                [0.950, 0.050, 0.000],
-                [0.000, 0.433, 0.567],
-                [0.000, 0.475, 0.525]
-            ]),
-            "achromatopsia": torch.tensor([
-                [0.299, 0.587, 0.114],
-                [0.299, 0.587, 0.114],
-                [0.299, 0.587, 0.114]
-            ])
+            "protanopia": torch.tensor([[0.567, 0.433, 0.000], [0.558, 0.442, 0.000], [0.000, 0.242, 0.758]]),
+            "deuteranopia": torch.tensor([[0.625, 0.375, 0.000], [0.700, 0.300, 0.000], [0.000, 0.300, 0.700]]),
+            "tritanopia": torch.tensor([[0.950, 0.050, 0.000], [0.000, 0.433, 0.567], [0.000, 0.475, 0.525]]),
+            "achromatopsia": torch.tensor([[0.299, 0.587, 0.114], [0.299, 0.587, 0.114], [0.299, 0.587, 0.114]]),
         }
 
         M = matrices.get(self.mode, matrices["protanopia"])
