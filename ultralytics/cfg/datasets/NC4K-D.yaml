@@ -1,0 +1,44 @@
+
+path: ../datasets/NC4K-D
+train: train/images
+val: test/images
+
+# Classes
+names:
+  0: flatfish
+  1: octopus
+  2: owl
+  3: person
+  4: snake
+  5: insect
+  6: cat
+  7: spider
+  8: lizard
+  9: crab
+  10: squirrel
+  11: frog
+  12: fish
+  13: sheep
+  14: dragonfly
+  15: rabbit
+  16: turtle
+  17: shrimp
+  18: butterfly
+  19: bird
+  20: sea horse
+  21: sea dragon
+  22: crocodile
+  23: bear
+  24: starfish
+  25: leopard
+  26: deer
+  27: wolf
+  28: koala
+  29: tiger
+  30: giraffe
+  31: mouse
+  32: fox
+  33: lion
+  34: moth
+  35: dog
+  36: otter

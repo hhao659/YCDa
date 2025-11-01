@@ -1,0 +1,14 @@
+path: ../datasets/ASO
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 5
+names: ['balloon', 'bird', 'drone', 'plane', 'plastic']
+
+roboflow:
+  workspace: aerial-small-object-detection
+  project: aerialsmallobject2
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/aerial-small-object-detection/aerialsmallobject2/dataset/1

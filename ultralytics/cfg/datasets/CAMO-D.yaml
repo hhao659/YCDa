@@ -1,0 +1,50 @@
+
+path: ../datasets/CAMO-D
+train: train/images
+val: test/images
+
+# Classes
+names:
+  0: bird
+  1: octopus
+  2: snake
+  3: cat
+  4: insect
+  5: person
+  6: fish
+  7: lizard
+  8: butterfly
+  9: sea horse
+  10: moth
+  11: crocodile
+  12: owl
+  13: frog
+  14: leopard
+  15: shrimp
+  16: deer
+  17: wolf
+  18: fox
+  19: sea dragon
+  20: squirrel
+  21: spider
+  22: sloth
+  23: flatfish
+  24: dog
+  25: turtle
+  26: bear
+  27: rabbit
+  28: weasel
+  29: crab
+  30: sheep
+  31: dolphin
+  32: tiger
+  33: lion
+  34: giraffe
+  35: monkey
+  36: seal
+  37: camel
+  38: kangaroo
+  39: snail
+  40: mouse
+  41: hedgehog
+  42: pig
