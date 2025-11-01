@@ -10,10 +10,7 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
-from ultralytics.nn.modules.ESSamp import ESSamp
 from ultralytics.nn.autobackend import check_class_names
-from ultralytics.nn.modules.CBAM import CBAM
-from ultralytics.nn.modules.colorblindConv2d import ColorBlindTransform
 from ultralytics.nn.modules import (
     AIFI,
     C1,
@@ -57,6 +54,7 @@ from ultralytics.nn.modules import (
     ImagePoolingAttn,
     Index,
     LRPCHead,
+    MoEConv,
     Pose,
     RepC3,
     RepConv,
@@ -71,10 +69,10 @@ from ultralytics.nn.modules import (
     YOLOEDetect,
     YOLOESegment,
     v10Detect,
-    MoEConvBlock,
-    MoEConv,
-    YCbCrDecoupler,
 )
+from ultralytics.nn.modules.CBAM import CBAM
+from ultralytics.nn.modules.colorblindConv2d import ColorBlindTransform
+from ultralytics.nn.modules.ESSamp import ESSamp
 from ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, YAML, colorstr, emojis
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
 from ultralytics.utils.loss import (
@@ -1599,7 +1597,7 @@ def parse_model(d, ch, verbose=True):
     if scales:
         scale = d.get("scale")
         if not scale:
-            scale = tuple(scales.keys())[0]
+            scale = next(iter(scales.keys()))
             LOGGER.warning(f"no model scale passed. Assuming scale='{scale}'.")
         depth, width, max_channels = scales[scale]
 
@@ -1649,7 +1647,7 @@ def parse_model(d, ch, verbose=True):
             C2fCIB,
             A2C2f,
             MoEConv,
-#            YCbCrDecoupler,
+            #            YCbCrDecoupler,
         }
     )
     repeat_modules = frozenset(  # modules with 'repeat' arguments
@@ -1746,12 +1744,12 @@ def parse_model(d, ch, verbose=True):
             c2 = 3
             args = [*args]
         elif m is ESSamp:
-            c1,c2  = args[0],args[1]
+            c1, c2 = args[0], args[1]
         elif m is CBAM:
-            channels,reduction  = args[0],args[1]
-#        elif m is YCbCrDecoupler:
-#            c2 = 6   # 明确指定输出通道数
-                
+            channels, reduction = args[0], args[1]
+        #        elif m is YCbCrDecoupler:
+        #            c2 = 6   # 明确指定输出通道数
+
         else:
             c2 = ch[f]
 
@@ -1760,7 +1758,7 @@ def parse_model(d, ch, verbose=True):
         m_.np = sum(x.numel() for x in m_.parameters())  # number params
         m_.i, m_.f, m_.type = i, f, t  # attach index, 'from' index, type
         if verbose:
-            LOGGER.info(f"{i:>3}{str(f):>20}{n_:>3}{m_.np:10.0f}  {t:<45}{str(args):<30}")  # print
+            LOGGER.info(f"{i:>3}{f!s:>20}{n_:>3}{m_.np:10.0f}  {t:<45}{args!s:<30}")  # print
         save.extend(x % i for x in ([f] if isinstance(f, int) else f) if x != -1)  # append to savelist
         layers.append(m_)
         if i == 0:
@@ -1804,7 +1802,7 @@ def guess_model_scale(model_path):
         (str): The size character of the model's scale (n, s, m, l, or x).
     """
     try:
-        return re.search(r"yolo(e-)?[v]?\d+([nslmx])", Path(model_path).stem).group(2)  # noqa
+        return re.search(r"yolo(e-)?[v]?\d+([nslmx])", Path(model_path).stem).group(2)
     except AttributeError:
         return ""
 
