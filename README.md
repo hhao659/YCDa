@@ -12,6 +12,7 @@ Human vision exhibits remarkable adaptability in perceiving objects under camouf
 ## Performance Comparison
 
 **Table: Performance comparison between YCDa-enhanced models and baselines on COD10K-D, NC4K-D, and CAMO-D datasets.** Bold indicates the best-performing method within each baseline group.
+<div align="center">
 
 <table>
   <thead>
@@ -78,6 +79,8 @@ Human vision exhibits remarkable adaptability in perceiving objects under camouf
     </tr>
   </tbody>
 </table>
+
+</div>
 
 
 ## Quick Start
