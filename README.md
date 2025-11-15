@@ -13,20 +13,71 @@ Human vision exhibits remarkable adaptability in perceiving objects under camouf
 
 **Table: Performance comparison between YCDa-enhanced models and baselines on COD10K-D, NC4K-D, and CAMO-D datasets.** Bold indicates the best-performing method within each baseline group.
 
-| Methods | COD10K-D | | | NC4K-D | | | CAMO-D | | |
-|---------|----------|-------|-------|--------|-------|-------|--------|-------|-------|
-| | mAP | AP50 | AP75 | mAP | AP50 | AP75 | mAP | AP50 | AP75 |
-| **RT-DETR-L** | 18.4 | 26.6 | 19.3 | **35.9** | **50.8** | **36.9** | **29.3** | **39.5** | **31.2** |
-| **RT-DETR-L + YCDa** | **19.6** | **28.3** | **20.7** | 34.1 | 48.7 | 34.0 | 22.5 | 30.1 | 23.1 |
-| | | | | | | | | | |
-| **YOLOv8s** | 11.2 | 19.9 | 10.9 | 29.0 | 45.1 | 29.9 | 20.5 | 31.1 | 21.2 |
-| **YOLOv8s + YCDa** | **14.7** | **24.4** | **15.1** | **32.0** | **48.6** | **32.8** | **21.6** | **31.7** | **21.5** |
-| | | | | | | | | | |
-| **YOLO11s** | 10.4 | 17.5 | 10.5 | 27.0 | 40.5 | 28.3 | 21.4 | 31.3 | 21.7 |
-| **YOLO11s + YCDa** | **17.2** | **26.3** | **18.3** | **31.9** | **47.0** | **33.5** | **25.5** | **36.1** | **26.3** |
-| | | | | | | | | | |
-| **YOLO12s** | 8.5 | 14.9 | 7.9 | 26.0 | 38.7 | 27.6 | 20.4 | 30.8 | 19.1 |
-| **YOLO12s + YCDa** | **18.0** | **28.7** | **18.2** | **33.7** | **48.6** | **36.6** | **26.0** | **35.3** | **27.7** |
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Methods</th>
+      <th colspan="3">COD10K-D</th>
+      <th colspan="3">NC4K-D</th>
+      <th colspan="3">CAMO-D</th>
+    </tr>
+    <tr>
+      <th>mAP</th><th>AP50</th><th>AP75</th>
+      <th>mAP</th><th>AP50</th><th>AP75</th>
+      <th>mAP</th><th>AP50</th><th>AP75</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>RT-DETR-L</td>
+      <td>18.4</td><td>26.6</td><td>19.3</td>
+      <td><b>35.9</b></td><td><b>50.8</b></td><td><b>36.9</b></td>
+      <td><b>29.3</b></td><td><b>39.5</b></td><td><b>31.2</b></td>
+    </tr>
+    <tr>
+      <td>RT-DETR-L + YCDa</td>
+      <td><b>19.6</b></td><td><b>28.3</b></td><td><b>20.7</b></td>
+      <td>34.1</td><td>48.7</td><td>34.0</td>
+      <td>22.5</td><td>30.1</td><td>23.1</td>
+    </tr>
+    <tr>
+      <td>YOLOv8s</td>
+      <td>11.2</td><td>19.9</td><td>10.9</td>
+      <td>29.0</td><td>45.1</td><td>29.9</td>
+      <td>20.5</td><td>31.1</td><td>21.2</td>
+    </tr>
+    <tr>
+      <td>YOLOv8s + YCDa</td>
+      <td><b>14.7</b></td><td><b>24.4</b></td><td><b>15.1</b></td>
+      <td><b>32.0</b></td><td><b>48.6</b></td><td><b>32.8</b></td>
+      <td><b>21.6</b></td><td><b>31.7</b></td><td><b>21.5</b></td>
+    </tr>
+    <tr>
+      <td>YOLO11s</td>
+      <td>10.4</td><td>17.5</td><td>10.5</td>
+      <td>27.0</td><td>40.5</td><td>28.3</td>
+      <td>21.4</td><td>31.3</td><td>21.7</td>
+    </tr>
+    <tr>
+      <td>YOLO11s + YCDa</td>
+      <td><b>17.2</b></td><td><b>26.3</b></td><td><b>18.3</b></td>
+      <td><b>31.9</b></td><td><b>47.0</b></td><td><b>33.5</b></td>
+      <td><b>25.5</b></td><td><b>36.1</b></td><td><b>26.3</b></td>
+    </tr>
+    <tr>
+      <td>YOLO12s</td>
+      <td>8.5</td><td>14.9</td><td>7.9</td>
+      <td>26.0</td><td>38.7</td><td>27.6</td>
+      <td>20.4</td><td>30.8</td><td>19.1</td>
+    </tr>
+    <tr>
+      <td>YOLO12s + YCDa</td>
+      <td><b>18.0</b></td><td><b>28.7</b></td><td><b>18.2</b></td>
+      <td><b>33.7</b></td><td><b>48.6</b></td><td><b>36.6</b></td>
+      <td><b>26.0</b></td><td><b>35.3</b></td><td><b>27.7</b></td>
+    </tr>
+  </tbody>
+</table>
 
 
 ## Quick Start
