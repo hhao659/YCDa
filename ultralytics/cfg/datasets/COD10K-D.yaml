@@ -1,0 +1,75 @@
+
+path: ../datasets/COD10K-D
+train: train/images
+val: test/images
+
+# Classes
+names:
+  0: Toad
+  1: Pipefish
+  2: StickInsect
+  3: Katydid
+  4: Cat
+  5: Octopus
+  6: Leopard
+  7: Centipede
+  8: GhostPipefish
+  9: StarFish
+  10: Owl
+  11: Bird
+  12: Kangaroo
+  13: Spider
+  14: Chameleon
+  15: Mockingbird
+  16: Grasshopper
+  17: Cheetah
+  18: Gecko
+  19: Bug
+  20: Mantis
+  21: SeaHorse
+  22: Crab
+  23: ScorpionFish
+  24: Giraffe
+  25: Butterfly
+  26: Cicada
+  27: Shrimp
+  28: Caterpillar
+  29: Dog
+  30: Fish
+  31: LeafySeaDragon
+  32: Dragonfly
+  33: Lizard
+  34: Snake
+  35: Bee
+  36: Worm
+  37: Ant
+  38: Human
+  39: Deer
+  40: Duck
+  41: Sciuridae
+  42: BatFish
+  43: Frog
+  44: Bittern
+  45: ClownFish
+  46: Turtle
+  47: Flounder
+  48: Heron
+  49: Frogmouth
+  50: Stingaree
+  51: Bat
+  52: Moth
+  53: Tiger
+  54: Grouse
+  55: Pagurian
+  56: Rabbit
+  57: Lion
+  58: Wolf
+  59: FrogFish
+  60: Owlfly
+  61: Crocodile
+  62: Sheep
+  63: Monkey
+  64: Slug
+  65: Beetle
+  66: CrocodileFish
+  67: Reccoon
