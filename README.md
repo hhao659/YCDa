@@ -12,6 +12,7 @@ Human vision exhibits remarkable adaptability in perceiving objects under camouf
 ## Performance Comparison
 
 **Table: Performance comparison between YCDa-enhanced models and baselines on COD10K-D, NC4K-D, and CAMO-D datasets.** Bold indicates the best-performing method within each baseline group.
+
 <div align="center">
 
 <table>
@@ -82,7 +83,6 @@ Human vision exhibits remarkable adaptability in perceiving objects under camouf
 
 </div>
 
-
 ## Quick Start
 
 ```bash
@@ -95,11 +95,13 @@ pip install -e .
 ## Training
 
 ### YCDa-12s Model Pretrain
+
 ```bash
-yolo detect train model=yolo12s-YCDa.yaml data=coco.yaml epochs=60 batch=32  device=0
+yolo detect train model=yolo12s-YCDa.yaml data=coco.yaml epochs=60 batch=32 device=0
 ```
 
 ### Camouflage task
+
 ```bash
 yolo detect train model= data=yolo12s-YCDa.yaml epochs=300 pretrained=YCDa-12s-cocoPretrain.pt batch=16 patience=50 device=0
 ```
@@ -113,7 +115,6 @@ yolo detect val model=YCDa-12s-COD10K-D.pt data=COD10K-D.yaml device=0 split=tes
 ## Checkpoints
 
 🔗 **[Download YCDa-12s-COD10K-D Checkpoints]()**
-
 
 ## Citation
 
