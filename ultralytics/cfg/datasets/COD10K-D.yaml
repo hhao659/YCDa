@@ -1,4 +1,3 @@
-
 path: ../datasets/COD10K-D
 train: train/images
 val: test/images
