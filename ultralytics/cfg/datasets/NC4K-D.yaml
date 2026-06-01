@@ -1,4 +1,3 @@
-
 path: ../datasets/NC4K-D
 train: train/images
 val: test/images
